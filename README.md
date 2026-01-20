@@ -127,7 +127,7 @@ Users are strongly advised to store all credentials securely and responsibly.
 
 Manoj Aberathna
 Final Year – BSc (Hons) in Information Technology
-Horizon Campus | Editex Studio
+Horizon Campus | 
 
 
 
