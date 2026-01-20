@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="si">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>SecureVault Ultimate | Manoj Abeyrathna</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00e5ff;
+            --bg-dark: #050a14;
+            --card-bg: rgba(13, 25, 48, 0.95);
+            --text: #e0f7ff;
+            --accent: #10b981;
+            --danger: #ff3860;
+            --warning: #ffdd57;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            backdrop-filter: blur(15px);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .pass-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        textarea,
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            outline: none;
+            transition: 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        textarea:focus,
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .strength-meter {
+            height: 4px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 8px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: 0.3s;
+        }
+
+        .btn-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-danger {
+            background: rgba(255, 56, 96, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 16px;
+            border: 1px dashed var(--accent);
+            display: none;
+        }
+
+        .res-display {
+            font-size: 13px;
+            word-break: break-all;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 11px;
+            opacity: 0.6;
+            text-align: center;
+        }
+
+        .footer span {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 10, 20, 0.95);
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 229, 255, 0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #setup-screen,
+        #unlock-screen,
+        #dashboard-screen {
+            display: none;
+        }
+    </style>
+</head>
+
+<body onload="init()">
+    <div class="container">
+        <div id="setup-screen" class="card">
+            <h2>Master Setup</h2>
+            <div class="input-group">
+                <label>SETUP MESSAGE</label>
+                <textarea id="s-msg" placeholder="Write anything..."></textarea>
+            </div>
+            <div class="input-group">
+                <label>MASTER PASSWORD</label>
+                <div class="pass-wrapper">
+                    <input type="password" id="s-pass" placeholder="Password"
+                        oninput="updateStrength(this.value, 's-bar', 's-txt')">
+                    <button class="toggle-btn" onclick="toggle('s-pass')">👁</button>
+                </div>
+                <div class="strength-meter">
+                    <div id="s-bar" class="strength-bar"></div>
+                </div>
+                <small id="s-txt" style="font-size:10px; display:block; text-align:right; margin-top:4px;">Strength:
+                    None</small>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="setup()">SET MASTER KEY & LOCK</button>
+            <div id="setup-res" class="result-box">
+                <p style="font-size:11px; margin-bottom:10px;">SAVE THIS KEY SECURELY:</p>
+                <div id="setup-key" class="res-display"></div>
+                <button class="btn-primary" style="width:100%" onclick="location.reload()">PROCEED TO LOGIN</button>
+            </div>
+        </div>
+        <div id="unlock-screen" class="card">
+            <h2>Unlock Access</h2>
+            <div class="input-group">
+                <label>MASTER SECURITY KEY</label>
+                <textarea id="u-key" placeholder="Paste your Key"></textarea>
+            </div>
+            <div class="input-group">
+                <label>PASSWORD</label>
+                <div class="pass-wrapper">
+                    <input type="password" id="u-pass" placeholder="Password">
+                    <button class="toggle-btn" onclick="toggle('u-pass')">👁</button>
+                </div>
+            </div>
+            <div class="btn-stack">
+                <button class="btn-primary" onclick="unlock()">AUTHENTICATE</button>
+                <button class="btn-danger" onclick="reset()">FACTORY RESET</button>
+            </div>
+        </div>
+        <div id="dashboard-screen" class="card">
+            <p style="font-size:10px; color:var(--danger); text-align:center; margin-bottom:15px;">Auto-lock active (5
+                mins idle)</p>
+            <h2>Workspace</h2>
+            <div class="input-group">
+                <label>DATA INPUT</label>
+                <textarea id="w-data" placeholder="Text or Cipher..."></textarea>
+            </div>
+            <div class="input-group">
+                <label>MESSAGE PASSWORD</label>
+                <div class="pass-wrapper">
+                    <input type="password" id="w-pass" placeholder="Message Password"
+                        oninput="updateStrength(this.value, 'w-bar', 'w-txt')">
+                    <button class="toggle-btn" onclick="toggle('w-pass')">👁</button>
+                </div>
+                <div class="strength-meter">
+                    <div id="w-bar" class="strength-bar"></div>
+                </div>
+                <small id="w-txt" style="font-size:10px; display:block; text-align:right; margin-top:4px;">Strength:
+                    None</small>
+            </div>
+            <div class="btn-stack">
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-primary" onclick="work('enc')">ENCRYPT</button>
+                    <button class="btn-outline" onclick="work('dec')">DECRYPT</button>
+                </div>
+                <button class="btn-danger" onclick="logout()">LOGOUT</button>
+            </div>
+            <div id="w-res-box" class="result-box">
+                <div id="w-res-text" class="res-display"></div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-action" style="background:var(--accent); color:white; border:none;"
+                        onclick="copyResult()">COPY</button>
+                    <button class="btn-action"
+                        style="background:transparent; border:1px solid var(--accent); color:var(--accent);"
+                        onclick="downloadResult()">DOWNLOAD</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">Powered by <span>Manoj Abeyrathna</span></div>
+    <div id="loader" class="overlay">
+        <div class="spinner"></div>
+    </div>
+    <script>
+        let idleCounter = 0;
+        function init() {
+            if (localStorage.getItem('m_h')) document.getElementById('unlock-screen').style.display = 'block';
+            else document.getElementById('setup-screen').style.display = 'block';
+        }
+        function toggle(id) {
+            const el = document.getElementById(id);
+            el.type = el.type === "password" ? "text" : "password";
+        }
+        function updateStrength(p, bid, tid) {
+            const b = document.getElementById(bid);
+            const t = document.getElementById(tid);
+            let s = 0;
+            if (p.length > 7) s++;
+            if (/[A-Z]/.test(p)) s++;
+            if (/[0-9]/.test(p)) s++;
+            if (/[^A-Za-z0-9]/.test(p)) s++;
+            const colors = ["#ff3860", "#ffdd57", "#2196F3", "#10b981"];
+            const labels = ["Weak", "Fair", "Good", "Very Strong"];
+            if (p.length === 0) { b.style.width = "0%"; t.innerText = "Strength: None"; return; }
+            b.style.width = (s * 25) + "%";
+            b.style.backgroundColor = colors[s - 1] || colors[0];
+            t.innerText = "Strength: " + (labels[s - 1] || labels[0]);
+            t.style.color = colors[s - 1] || colors[0];
+        }
+        async function load() {
+            document.getElementById('loader').style.display = 'flex';
+            await new Promise(r => setTimeout(r, 1000));
+            document.getElementById('loader').style.display = 'none';
+        }
+        async function setup() {
+            const m = document.getElementById('s-msg').value;
+            const p = document.getElementById('s-pass').value;
+            if (!m || p.length < 8) return alert("Fill all fields.");
+            await load();
+            localStorage.setItem('m_h', CryptoJS.SHA256(p).toString());
+            const c = CryptoJS.AES.encrypt(m, p).toString();
+            localStorage.setItem('m_c', c);
+            document.getElementById('setup-res').style.display = 'block';
+            document.getElementById('setup-key').innerText = c;
+        }
+        async function unlock() {
+            const k = document.getElementById('u-key').value.trim();
+            const p = document.getElementById('u-pass').value;
+            if (CryptoJS.SHA256(p).toString() !== localStorage.getItem('m_h') || k !== localStorage.getItem('m_c')) return alert("Invalid credentials.");
+            await load();
+            sessionStorage.setItem('key', p);
+            document.getElementById('unlock-screen').style.display = 'none';
+            document.getElementById('dashboard-screen').style.display = 'block';
+            startIdleTimer();
+        }
+        function startIdleTimer() {
+            setInterval(() => {
+                idleCounter++;
+                if (idleCounter >= 5) logout();
+            }, 60000);
+            document.onmousemove = document.onkeypress = document.onclick = () => idleCounter = 0;
+        }
+        async function work(type) {
+            const d = document.getElementById('w-data').value;
+            const p = document.getElementById('w-pass').value;
+            if (!d || !p) return alert("Data and Password required.");
+            if (type === 'enc' && d.startsWith("U2FsdGVkX1")) {
+                if (!confirm("This message is already encrypted. Encrypt again?")) return;
+            }
+            await load();
+            try {
+                let res = type === 'enc' ? CryptoJS.AES.encrypt(d, p).toString() : CryptoJS.AES.decrypt(d, p).toString(CryptoJS.enc.Utf8);
+                if (!res) throw new Error();
+                document.getElementById('w-res-text').innerText = res;
+                document.getElementById('w-res-box').style.display = 'block';
+            } catch (e) { alert("Error: Check your data or password."); }
+        }
+        function logout() { sessionStorage.clear(); location.reload(); }
+        function reset() { if (confirm("Reset everything?")) { localStorage.clear(); location.reload(); } }
+        function copyResult() { navigator.clipboard.writeText(document.getElementById('w-res-text').innerText); alert("Copied!"); }
+        function downloadResult() {
+            const t = document.getElementById('w-res-text').innerText;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([t], { type: 'text/plain' }));
+            a.download = "secure_vault_data.txt";
+            a.click();
+        }
+    </script>
+</body>
+
+</html>
