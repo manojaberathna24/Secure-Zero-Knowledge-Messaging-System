@@ -1,12 +1,16 @@
+
+![SecureVault Prime Interface](Capture1.JPG)
+![Encryption Process](Capture2.JPG)
+
 # SecureVault Prime
 
 Professional Grade Data Encryption Suite
 
 "Information is Wealth. Privacy is its Vault."
 
-![SecureVault Prime Interface](Capture1.jpg)
 
----
+
+
 
 ## Project Overview
 
@@ -23,7 +27,7 @@ All encryption, decryption, and authentication processes occur only within the u
 
 This project was developed by Manoj Aberathna as a specialized security solution for business professionals, bankers, journalists, and privacy-conscious individuals.
 
----
+
 
 ## Technical Security Stack
 
@@ -38,7 +42,7 @@ This project was developed by Manoj Aberathna as a specialized security solution
 
 The Pepper Code introduces an additional obfuscation layer that makes the cipher-text resistant to AI-based analysis tools such as ChatGPT or Gemini.
 
----
+
 
 ## Full Usage Guide
 
@@ -60,7 +64,7 @@ SecureVault Prime follows a Two-Layer Security Model, ensuring that even if one 
    * Store the Master Security Key offline
    * This key acts as your physical vault door
 
----
+
 
 ### Phase 2: Authentication
 
@@ -70,7 +74,6 @@ SecureVault Prime follows a Two-Layer Security Model, ensuring that even if one 
 
 3. Upon successful validation, the private vault workspace is unlocked
 
----
 
 ### Phase 3: Data Encryption and Decryption
 
@@ -86,9 +89,9 @@ SecureVault Prime follows a Two-Layer Security Model, ensuring that even if one 
 * Log in to the vault
 * Provide the cipher-text and the corresponding Message Password
 
-![Encryption Process](Capture2.jpg)
 
----
+
+
 
 ## Key Features
 
@@ -107,7 +110,7 @@ SecureVault Prime follows a Two-Layer Security Model, ensuring that even if one 
 * Offline Capability
   Fully functional without an internet connection once loaded.
 
----
+
 
 ## Important Disclaimer
 
@@ -119,7 +122,6 @@ SecureVault Prime is engineered for maximum security. As a result:
 
 Users are strongly advised to store all credentials securely and responsibly.
 
----
 
 ## Developed By
 
@@ -127,7 +129,7 @@ Manoj Aberathna
 Final Year – BSc (Hons) in Information Technology
 Horizon Campus | Editex Studio
 
----
+
 
 SecureVault Prime delivers complete digital ownership, privacy, and control over sensitive information.
 
